@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   const [store, setStore] = useState([]);
   const [prevData, setPrevData] = useState({});
-  
+
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [company, setCompany] = useState("")
@@ -141,33 +141,38 @@ function App() {
 
             <button onClick={previewData} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">preview</button>
 
-            
+
           </form>
 
         </div>
       </div>
 
       {
-        Object.keys(prevData).length !== 0 &&
-        <>
-          <div class="max-w-2xl mx-auto mb-28">
+        Object.keys(prevData).length === 0
+          ? <></>
+          :
+          <>
 
-            <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">preview data</label>
-            <div id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message...">
+            <div class="max-w-2xl mx-auto mb-28">
 
-              <p>{prevData.firstName}</p>
-              <p>{prevData.lastName}</p>
-              <p>{prevData.company}</p>
-              <p>{prevData.email}</p>
-              <p>{prevData.address}</p>
-              <p>{prevData.city}</p>
-              <p>{prevData.state}</p>
+              <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">preview data</label>
+              <div id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message...">
+
+                <p>{prevData.firstName}</p>
+                <p>{prevData.lastName}</p>
+                <p>{prevData.company}</p>
+                <p>{prevData.email}</p>
+                <p>{prevData.address}</p>
+                <p>{prevData.city}</p>
+                <p>{prevData.state}</p>
+              </div>
+
+              <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
             </div>
+          </>
 
-            <script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
-          </div>
-        </>
       }
+
       {
         store.length < 1 ?
           <>
@@ -200,10 +205,10 @@ function App() {
                             {
                               list.map(record => (
                                 <>
-                              <td className="px-4 py-3 text-sm  border">{record}</td>
+                                  <td className="px-4 py-3 text-sm  border">{record}</td>
                                 </>
                               ))
-                              }
+                            }
                           </tr>
                         </>
                       ))}
