@@ -61,7 +61,7 @@ function App() {
 
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(finalVal));
-    pom.setAttribute('download', 'test.csv');
+    pom.setAttribute('download', 'data.csv');
     pom.click();
   }
 
@@ -204,7 +204,11 @@ function App() {
       {
         store.length < 1 ?
           <>
-            Empty Records
+            <div>
+              <h2 className='mb-20 text-grey-500 text-3xl'>
+                Empty Records.
+              </h2>
+            </div>
           </>
           :
           <>
