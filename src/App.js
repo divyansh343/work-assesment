@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   const [store, setStore] = useState([]);
   const [prevData, setPrevData] = useState({});
+  const [checkedRecords, setCheckedReocords] = useState([]);
 
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -38,9 +39,22 @@ function App() {
     clearValues()
   }
 
+  const selectRecords = (event) => {
+    if (event.target.checked) {
+      if (!checkedRecords.includes(event.target.value)) {
+        setCheckedReocords(checkedRecords => [...checkedRecords, event.target.value])
+      }
+    } else {
+      setCheckedReocords(checkedRecords => (checkedRecords.filter(val => val !== event.target.value)))
+    }
+    console.log(checkedRecords)
+
+    // setCheckedReocords(checkedRecords => [...checkedRecords, list])
+    // console.log("checked " + checkedRecords)
+  }
+
   const handleExportToCsv = () => {
     var content = store;
-
     var finalVal = '';
 
     for (var i = 0; i < content.length; i++) {
@@ -64,6 +78,34 @@ function App() {
     pom.setAttribute('download', 'data.csv');
     pom.click();
   }
+  
+  const handleSelectedExportToCsv = () => {
+    var er = [checkedRecords]
+    var content = er;
+    // var content = store;
+
+    var finalVal = '';
+
+    for (var i = 0; i < content.length; i++) {
+      var value = content[i];
+      for (var j = 0; j < value.length; j++) {
+        var innerValue = value[j];
+        var result = innerValue.replaceAll('"', '');
+        if (result.search(/("|,|\n)/g) >= 0)
+          // result = '"' + result + '"';
+        if (j > 0)
+        finalVal += ',';
+        finalVal += result;
+      }
+
+      finalVal += '\n';
+    }
+
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(finalVal));
+    pom.setAttribute('download', 'filterd_records.csv');
+    pom.click();
+  }
 
   const previewData = (e) => {
     e.preventDefault()
@@ -73,6 +115,11 @@ function App() {
 
     }
     )
+  }
+
+  const clearAllRecords = () => {
+    setStore([])
+    setCheckedReocords([])
   }
 
   return (
@@ -168,7 +215,17 @@ function App() {
 
             <button onClick={previewData} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">preview</button>
 
-            <button onClick={handleExportToCsv} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Export to csv</button>
+          
+            <button onClick={handleExportToCsv} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Export to csv
+            </button>
+            
+              
+            <button onClick={handleSelectedExportToCsv} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">selected Export to csv
+            </button> 
+              
+            <button onClick={clearAllRecords} className="my-2 mx-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">clear records
+            </button>
+            
 
           </form>
 
@@ -219,6 +276,7 @@ function App() {
 
                     <thead>
                       <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
+                        <th className="px-4 py-3">Select</th>
                         <th className="px-4 py-3">First Name</th>
                         <th className="px-4 py-3">Last Name</th>
                         <th className="px-4 py-3">Company</th>
@@ -235,8 +293,17 @@ function App() {
                         <>
                           <tr className="text-gray-700">
                             {
+                              list.length > 1 &&
+                              <div className='py-6'>
+                                {/* <input type="checkbox" class="custom-control-input" value={list} id={list} /> */}
+                                <input type="checkbox" class="custom-control-input" id={list} value={list} onClick={selectRecords} />
+                                {/* <input onClick={selectRecords(list)} type="checkbox" name="type" /> */}
+                              </div>
+                            }
+                            {
                               list.map(record => (
                                 <>
+
                                   <td className="px-4 py-3 text-sm  border">{record}</td>
                                 </>
                               ))
