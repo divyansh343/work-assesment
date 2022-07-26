@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import toast,{ Toaster } from 'react-hot-toast';
 import './App.css';
+import Header from './components/header';
 
 function App() {
   const [store, setStore] = useState([]);
@@ -18,6 +20,7 @@ function App() {
 
 
   const clearValues = () => {
+    //function to clear all the input fields
     setFirstName("");
     setLastName("");
     setCompany("");
@@ -32,14 +35,22 @@ function App() {
   }
 
   const handleSubmit = (e) => {
+    //it validates and add data into records
     e.preventDefault()
-    const keep = [firstName, lastName, company, email, password, cpassword, address, city, state]
-    setStore(store => [...store, keep])
+    if (password !== cpassword) {
+      toast.error("your password and confirm password dont match")
+    } else{
 
-    clearValues()
+      const keep = [firstName, lastName, company, email, password, cpassword, address, city, state]
+      setStore(store => [...store, keep])
+      toast.success("added into records")
+      
+      clearValues()
+    }
   }
 
   const selectRecords = (event) => {
+    // use to manage selected records state
     if (event.target.checked) {
       if (!checkedRecords.includes(event.target.value)) {
         setCheckedReocords(checkedRecords => [...checkedRecords, event.target.value])
@@ -47,13 +58,14 @@ function App() {
     } else {
       setCheckedReocords(checkedRecords => (checkedRecords.filter(val => val !== event.target.value)))
     }
-    console.log(checkedRecords)
-
-    // setCheckedReocords(checkedRecords => [...checkedRecords, list])
-    // console.log("checked " + checkedRecords)
   }
 
   const handleExportToCsv = () => {
+    // function to export records into csv
+    if (store.length === 0) {
+      toast("no records to export")
+      return
+    }
     var content = store;
     var finalVal = '';
 
@@ -77,12 +89,17 @@ function App() {
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(finalVal));
     pom.setAttribute('download', 'data.csv');
     pom.click();
+    toast.success("records exported into .csv file")
   }
   
   const handleSelectedExportToCsv = () => {
+        // function to export selected records into csv
+    if (checkedRecords.length === 0) {
+      toast("select records to export")
+      return
+    }
     var er = [checkedRecords]
     var content = er;
-    // var content = store;
 
     var finalVal = '';
 
@@ -105,11 +122,15 @@ function App() {
     pom.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(finalVal));
     pom.setAttribute('download', 'filterd_records.csv');
     pom.click();
+    toast("selected records exported into .csv file")
   }
 
   const previewData = (e) => {
+    // function to handle preview of input fields
+    if (Object.keys(prevData).length === 0) {
+      toast("nothing to preview")
+    }
     e.preventDefault()
-
     setPrevData({
       firstName, lastName, company, email, address, city, state
 
@@ -118,18 +139,15 @@ function App() {
   }
 
   const clearAllRecords = () => {
+    // function to clear all records
     setStore([])
     setCheckedReocords([])
   }
 
   return (
     <div className="App">
-      <div >
-        <p className="text-zinc-200 text-4xl bottom-4 border-black bg-purple-600">
-          Contact us
-        </p>
-      </div>
-
+      <Header header="Contact us" />
+      <div><Toaster/></div>
       <div>
         <div className="max-w-2xl mx-auto bg-white p-16">
           <form onSubmit={handleSubmit}>
@@ -138,6 +156,7 @@ function App() {
               <div>
                 <label for="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">First name</label>
                 <input
+                  maxLength={25}
                   value={firstName}
                   onChange={e => setFirstName(e.target.value)}
                   type="text" id="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required />
@@ -146,6 +165,7 @@ function App() {
               <div>
                 <label for="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Last name</label>
                 <input
+                  maxLength={25}
                   value={lastName}
                   onChange={e => setLastName(e.target.value)}
                   type="text" id="last_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required />
@@ -155,6 +175,7 @@ function App() {
             <div className="mb-6">
               <label for="compony" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Company</label>
               <input
+              maxLength={50}
                 value={company}
                 onChange={e => setCompany(e.target.value)}
                 type="company" id="company" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="amazon" required />
@@ -163,6 +184,7 @@ function App() {
             <div className="mb-6">
               <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email address</label>
               <input
+              maxLength={50}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 type="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john.doe@company.com" required />
@@ -173,12 +195,16 @@ function App() {
                 <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
                 <input
                   value={password}
+                  minLength={6}
+                  maxLength={15}
                   onChange={e => setPassword(e.target.value)}
                   type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required />
               </div>
               <div className="mb-6">
                 <label for="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Confirm password</label>
                 <input
+                  minLength={6}
+                  maxLength={15}
                   value={cpassword}
                   onChange={e => setCPassword(e.target.value)}
                   type="password" id="confirm_password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required />
@@ -188,6 +214,7 @@ function App() {
             <div className="mb-6">
               <label for="address" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Address</label>
               <input
+                maxLength={75}
                 value={address}
                 onChange={e => setAddress(e.target.value)}
                 type="address" id="address" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
@@ -197,6 +224,7 @@ function App() {
               <div>
                 <label for="city" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">City</label>
                 <input
+                maxLength={50}
                   value={city}
                   onChange={e => setCity(e.target.value)}
                   type="text" id="city" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="City" required />
@@ -204,6 +232,7 @@ function App() {
               <div>
                 <label for="state" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">State</label>
                 <input
+                minLength={25}
                   value={state}
                   onChange={e => setState(e.target.value)}
                   type="text" id="state" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="State" required />
@@ -316,10 +345,8 @@ function App() {
                 </div>
               </div>
             </section>
-
           </>
       }
-
     </div>
   );
 }
